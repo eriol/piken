@@ -4,6 +4,9 @@ import (
 	"io"
 	"net/http"
 	"os"
+
+	"github.com/Sirupsen/logrus"
+	"github.com/mitchellh/go-homedir"
 )
 
 func download(url, output string) error {
@@ -30,4 +33,15 @@ func download(url, output string) error {
 
 	return nil
 
+}
+
+// Get user home directory or exit with a fatal error.
+func getHome() string {
+
+	homeDir, err := homedir.Dir()
+	if err != nil {
+		logrus.Fatal(err)
+	}
+
+	return homeDir
 }
