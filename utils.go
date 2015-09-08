@@ -1,6 +1,7 @@
 package main // import "eriol.xyz/piken"
 
 import (
+	"encoding/csv"
 	"io"
 	"net/http"
 	"os"
@@ -44,4 +45,24 @@ func getHome() string {
 	}
 
 	return homeDir
+}
+
+// Read a CSV file and return a slice of slice.
+func readCsvFile(filepath string) (records [][]string, err error) {
+
+	file, err := os.Open(filepath)
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
+
+	reader := csv.NewReader(file)
+	reader.Comma = ';'
+	records, err = reader.ReadAll()
+	if err != nil {
+		return nil, err
+	}
+
+	return records, nil
+
 }
