@@ -9,6 +9,10 @@ import (
 
 const (
 	createTablesQuery = `
+	CREATE TABLE last_update (
+		filename TEXT NOT NULL PRIMARY KEY,
+		date TEXT
+	);
 	CREATE TABLE unicode_data (
 		id TEXT NOT NULL PRIMARY KEY,
 		name TEXT NOT NULL,
