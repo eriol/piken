@@ -5,10 +5,28 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/Sirupsen/logrus"
 	"github.com/mitchellh/go-homedir"
 )
+
+// Get Last-Modified for resources with the given URL.
+func checkLastModified(url string) (time.Time, error) {
+	r, err := http.Head(url)
+	if err != nil {
+		return time.Unix(0, 0), err
+	}
+	defer r.Body.Close()
+
+	t, err := time.Parse(time.RFC1123, r.Header["Last-Modified"][0])
+	if err != nil {
+		return time.Unix(0, 0), err
+	}
+
+	return t, nil
+
+}
 
 func download(url, output string) error {
 
