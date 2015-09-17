@@ -3,6 +3,7 @@ package sql // import "eriol.xyz/piken/sql"
 import (
 	"database/sql"
 	"os"
+	"time"
 
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -47,6 +48,7 @@ const (
 		simple_lowercase_mapping,
 		simple_titlecase_mapping)
 		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+	getLastUpdateQuery = `SELECT date FROM last_update WHERE filename = ?`
 )
 
 type Store struct {
@@ -117,4 +119,24 @@ func (s *Store) LoadFromRecords(records [][]string) error {
 	tx.Commit()
 
 	return nil
+}
+
+// Get latest update for given file.
+func (s *Store) GetLastUpdate(filename string) (time.Time, error) {
+	var t string
+
+	s.db.QueryRow(getLastUpdateQuery, filename).Scan(&t)
+
+	// If the query is empty return the beginning of time.
+	if t == "" {
+		return time.Unix(0, 0), nil
+	}
+
+	tp, err := time.Parse(time.RFC3339Nano, t)
+	if err != nil {
+		return time.Unix(0, 0), err
+	}
+
+	return tp, nil
+
 }
