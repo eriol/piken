@@ -48,7 +48,8 @@ const (
 		simple_lowercase_mapping,
 		simple_titlecase_mapping)
 		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
-	getLastUpdateQuery = `SELECT date FROM last_update WHERE filename = ?`
+	createLastUpdateQuery = `INSERT INTO last_update (filename, date) VALUES (?, ?)`
+	getLastUpdateQuery    = `SELECT date FROM last_update WHERE filename = ?`
 )
 
 type Store struct {
@@ -119,6 +120,16 @@ func (s *Store) LoadFromRecords(records [][]string) error {
 	tx.Commit()
 
 	return nil
+}
+
+// Create latest update entry for given file.
+func (s *Store) CreateLastUpdate(filename string, t time.Time) error {
+
+	ts := t.Format(time.RFC3339)
+
+	_, err := s.db.Exec(createLastUpdateQuery, filename, ts)
+
+	return err
 }
 
 // Get latest update for given file.
