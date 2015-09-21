@@ -2,7 +2,9 @@ package sql // import "eriol.xyz/piken/sql"
 
 import (
 	"database/sql"
+	"fmt"
 	"os"
+	"strconv"
 	"time"
 
 	_ "github.com/mattn/go-sqlite3"
@@ -50,6 +52,7 @@ const (
 		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
 	createLastUpdateQuery = `INSERT INTO last_update (filename, date) VALUES (?, ?)`
 	getLastUpdateQuery    = `SELECT date FROM last_update WHERE filename = ?`
+	getUnicodeQuery       = `SELECT id, name, category FROM unicode_data WHERE name LIKE ?`
 )
 
 type Store struct {
@@ -149,5 +152,37 @@ func (s *Store) GetLastUpdate(filename string) (time.Time, error) {
 	}
 
 	return tp, nil
+
+}
+
+// Search unicode data using name.
+func (s *Store) SearchUnicode(name string) (records [][]string, err error) {
+	var r string
+
+	name = fmt.Sprintf("%%%s%%", name)
+
+	rows, err := s.db.Query(getUnicodeQuery, name)
+	defer rows.Close()
+	if err != nil {
+		return [][]string{}, err
+	}
+
+	for rows.Next() {
+		var id, name, category string
+		err = rows.Scan(&id, &name, &category)
+
+		s, err := strconv.ParseInt(id, 16, 32)
+		if err != nil {
+			return [][]string{}, err
+		}
+		r = fmt.Sprintf("%c", s)
+
+		row := append([]string{}, id, name, category, r)
+
+		records = append(records, row)
+
+	}
+
+	return records, nil
 
 }
