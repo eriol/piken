@@ -18,7 +18,7 @@ const (
 		date TEXT
 	);
 	CREATE VIRTUAL TABLE unicode_data USING fts4(
-		id TEXT NOT NULL PRIMARY KEY,
+		codepoint TEXT NOT NULL PRIMARY KEY,
 		name TEXT NOT NULL,
 		category TEXT NOT NULL,
 		canonical_class TEXT NOT NULL,
@@ -35,7 +35,7 @@ const (
 		simple_titlecase_mapping TEXT
 	);`
 	insertUnicodeDataQuery = `INSERT INTO unicode_data (
-		id,
+		codepoint,
 		name,
 		category,
 		canonical_class, 
@@ -53,7 +53,7 @@ const (
 		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
 	createLastUpdateQuery = `INSERT INTO last_update (filename, date) VALUES (?, ?)`
 	getLastUpdateQuery    = `SELECT date FROM last_update WHERE filename = ?`
-	getUnicodeQuery       = `SELECT id, name, category FROM unicode_data WHERE name MATCH ?`
+	getUnicodeQuery       = `SELECT codepoint, name, category FROM unicode_data WHERE name MATCH ?`
 )
 
 type Store struct {
