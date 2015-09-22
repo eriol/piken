@@ -11,16 +11,17 @@ import (
 )
 
 const (
+	// Full-text search need only TEXT column.
 	createTablesQuery = `
 	CREATE TABLE last_update (
 		filename TEXT NOT NULL PRIMARY KEY,
 		date TEXT
 	);
-	CREATE TABLE unicode_data (
+	CREATE VIRTUAL TABLE unicode_data USING fts4(
 		id TEXT NOT NULL PRIMARY KEY,
 		name TEXT NOT NULL,
 		category TEXT NOT NULL,
-		canonical_class NUMERIC NOT NULL,
+		canonical_class TEXT NOT NULL,
 		bidi_class TEXT NOT NULL,
 		decomposition_type TEXT,
 		numeric_value_1 TEXT,
@@ -52,7 +53,7 @@ const (
 		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
 	createLastUpdateQuery = `INSERT INTO last_update (filename, date) VALUES (?, ?)`
 	getLastUpdateQuery    = `SELECT date FROM last_update WHERE filename = ?`
-	getUnicodeQuery       = `SELECT id, name, category FROM unicode_data WHERE name LIKE ?`
+	getUnicodeQuery       = `SELECT id, name, category FROM unicode_data WHERE name MATCH ?`
 )
 
 type Store struct {
@@ -158,8 +159,6 @@ func (s *Store) GetLastUpdate(filename string) (time.Time, error) {
 // Search unicode data using name.
 func (s *Store) SearchUnicode(name string) (records [][]string, err error) {
 	var r string
-
-	name = fmt.Sprintf("%%%s%%", name)
 
 	rows, err := s.db.Query(getUnicodeQuery, name)
 	defer rows.Close()
