@@ -2,9 +2,7 @@ package sql // import "eriol.xyz/piken/sql"
 
 import (
 	"database/sql"
-	"fmt"
 	"os"
-	"strconv"
 	"time"
 
 	_ "github.com/mattn/go-sqlite3"
@@ -58,6 +56,14 @@ const (
 
 type Store struct {
 	db *sql.DB
+}
+
+type UnicodeData struct {
+	CodePoint, Name, Category                                              string
+	CanonicalClass, BidiClass, DecompositionType                           string
+	NumericValue1, NumericValue2, NumericValue3                            string
+	BidiMirrored, Unicode1Name, IsoComment                                 string
+	SimpleUppercaseMapping, SimpleLowercaseMapping, SimpleTitlecaseMapping string
 }
 
 // Open SQLite 3 database used by piken or create it if it doesn't exist yet.
@@ -157,26 +163,20 @@ func (s *Store) GetLastUpdate(filename string) (time.Time, error) {
 }
 
 // Search unicode data using name.
-func (s *Store) SearchUnicode(name string) (records [][]string, err error) {
-	var r string
+func (s *Store) SearchUnicode(name string) (records []UnicodeData, err error) {
 
 	rows, err := s.db.Query(getUnicodeQuery, name)
 	defer rows.Close()
 	if err != nil {
-		return [][]string{}, err
+		return []UnicodeData{}, err
 	}
 
 	for rows.Next() {
-		var id, name, category string
-		err = rows.Scan(&id, &name, &category)
+		var row UnicodeData
 
-		s, err := strconv.ParseInt(id, 16, 32)
-		if err != nil {
-			return [][]string{}, err
+		if err := rows.Scan(&row.CodePoint, &row.Name, &row.Category); err != nil {
+			return []UnicodeData{}, err
 		}
-		r = fmt.Sprintf("%c", s)
-
-		row := append([]string{}, id, name, category, r)
 
 		records = append(records, row)
 
