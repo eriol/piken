@@ -2,11 +2,9 @@ package main // import "eriol.xyz/piken"
 
 import (
 	"encoding/csv"
-	"fmt"
 	"io"
 	"net/http"
 	"os"
-	"strconv"
 	"time"
 
 	"github.com/Sirupsen/logrus"
@@ -53,7 +51,6 @@ func download(url, output string) error {
 	}
 
 	return nil
-
 }
 
 // Get user home directory or exit with a fatal error.
@@ -84,16 +81,4 @@ func readCsvFile(filepath string) (records [][]string, err error) {
 	}
 
 	return records, nil
-
-}
-
-// Convert an unicode codepoint into a string.
-func codePointToGlyph(codepoint string) (string, error) {
-
-	s, err := strconv.ParseInt(codepoint, 16, 32)
-	if err != nil {
-		return "", err
-	}
-	return fmt.Sprintf("%c", s), nil
-
 }
