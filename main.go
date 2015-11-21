@@ -93,6 +93,10 @@ func main() {
 					Name:  "copy, c",
 					Usage: "copy glyph to clipboard",
 				},
+				cli.BoolTFlag{
+					Name:  "show-glyph",
+					Usage: "show glyph (defaults to true, use --show-glyph=false to disable)",
+				},
 			},
 			Action: func(c *cli.Context) {
 				args := strings.Join(c.Args(), " ")
@@ -104,7 +108,7 @@ func main() {
 				formatter := format.NewTextFormatter(
 					[]string{"CodePoint", "Name"},
 					" -- ",
-					true)
+					c.Bool("show-glyph"))
 
 				if c.Bool("copy") && len(rows) > 1 {
 					logrus.Warn("Copy to clipboard not allowed for multiple rows.")
