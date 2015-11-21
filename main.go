@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/Sirupsen/logrus"
+	"github.com/atotto/clipboard"
 	"github.com/codegangsta/cli"
 
 	"eriol.xyz/piken/format"
@@ -87,6 +88,12 @@ func main() {
 			Name:    "search",
 			Aliases: []string{"s"},
 			Usage:   "Search for unicode",
+			Flags: []cli.Flag{
+				cli.BoolFlag{
+					Name:  "copy, c",
+					Usage: "copy glyph to clipboard",
+				},
+			},
 			Action: func(c *cli.Context) {
 				args := strings.Join(c.Args(), " ")
 				rows, err := store.SearchUnicode(args)
@@ -98,6 +105,11 @@ func main() {
 					[]string{"CodePoint", "Name"},
 					" -- ",
 					true)
+
+				if c.Bool("copy") && len(rows) > 1 {
+					logrus.Warn("Copy to clipboard not allowed for multiple rows.")
+				}
+
 				for _, row := range rows {
 
 					b, err := formatter.Format(&row)
@@ -105,6 +117,18 @@ func main() {
 						logrus.Fatal(err)
 					}
 					fmt.Println(b)
+
+					// Copy to clipboard only when one row is returned by search.
+					if c.Bool("copy") && len(rows) == 1 {
+						glyph, err := format.CodePointToGlyph(row.CodePoint)
+						if err != nil {
+							logrus.Fatalf("Impossible to convert %s to glyph.",
+								row.CodePoint)
+						}
+						if err := clipboard.WriteAll(glyph); err != nil {
+							logrus.Fatalf("Copy to clipboard failed: %v", err)
+						}
+					}
 				}
 			},
 		},
