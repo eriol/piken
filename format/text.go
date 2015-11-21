@@ -25,7 +25,7 @@ func (t *TextFormatter) Format(s *sql.UnicodeData) (string, error) {
 
 	var buffer []string
 
-	glyph, err := codePointToGlyph(s.CodePoint)
+	glyph, err := CodePointToGlyph(s.CodePoint)
 	if err != nil {
 		return "", err
 	}
@@ -44,7 +44,7 @@ func (t *TextFormatter) Format(s *sql.UnicodeData) (string, error) {
 }
 
 // Convert an unicode codepoint into a string.
-func codePointToGlyph(codepoint string) (string, error) {
+func CodePointToGlyph(codepoint string) (string, error) {
 
 	s, err := strconv.ParseInt(codepoint, 16, 32)
 	if err != nil {
