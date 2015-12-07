@@ -3,6 +3,8 @@ import (
 	"strconv"
 	"testing"
 
+	"eriol.xyz/piken/sql"
+
 	"github.com/stretchr/testify/assert"
 )
 
@@ -16,4 +18,31 @@ func TestCodePointToGlyph(t *testing.T) {
 	if assert.Error(t, err) {
 		assert.Equal(t, err.(*strconv.NumError).Err, strconv.ErrRange)
 	}
+}
+
+func TestFormat(t *testing.T) {
+
+	s := sql.UnicodeData{CodePoint: "1F602",
+		Name: "FACE WITH TEARS OF JOY"}
+
+	formatter := NewTextFormatter(
+		[]string{"CodePoint", "Name"}, " -- ", true)
+	b, _ := formatter.Format(&s)
+	assert.Equal(t, b, "1F602 -- FACE WITH TEARS OF JOY -- 😂")
+
+	formatter = NewTextFormatter(
+		[]string{"CodePoint", "Name"}, " ## ", true)
+	b, _ = formatter.Format(&s)
+	assert.Equal(t, b, "1F602 ## FACE WITH TEARS OF JOY ## 😂")
+
+	formatter = NewTextFormatter(
+		[]string{"Name"}, " -- ", true)
+	b, _ = formatter.Format(&s)
+	assert.Equal(t, b, "FACE WITH TEARS OF JOY -- 😂")
+
+	formatter = NewTextFormatter(
+		[]string{"Name"}, " -- ", false)
+	b, _ = formatter.Format(&s)
+	assert.Equal(t, b, "FACE WITH TEARS OF JOY")
+
 }
