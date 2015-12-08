@@ -11,20 +11,20 @@ type baseFormatter struct {
 	showGlyph bool
 }
 
-func (df *baseFormatter) SetFields(fields []string) {
+func (bf *baseFormatter) SetFields(fields []string) {
 	for _, field := range fields {
-		df.fields = append(df.fields, field)
+		bf.fields = append(bf.fields, field)
 	}
 }
 
-func (df baseFormatter) Fields() []string {
-	return df.fields
+func (bf baseFormatter) Fields() []string {
+	return bf.fields
 }
 
-func (df *baseFormatter) SetShowGlyph(value bool) {
-	df.showGlyph = value
+func (bf *baseFormatter) SetShowGlyph(value bool) {
+	bf.showGlyph = value
 }
 
-func (df baseFormatter) ShowGlyph() bool {
-	return df.showGlyph
+func (bf baseFormatter) ShowGlyph() bool {
+	return bf.showGlyph
 }
