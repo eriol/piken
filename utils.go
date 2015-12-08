@@ -5,9 +5,11 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"strconv"
 	"time"
 
 	"github.com/Sirupsen/logrus"
+	"github.com/cheggaaa/pb"
 	"github.com/mitchellh/go-homedir"
 )
 
@@ -28,6 +30,8 @@ func checkLastModified(url string) (time.Time, error) {
 
 }
 
+// Download a file from URL `url` and save to `output`.
+// A progress bar is showed during the download.
 func download(url, output string) error {
 
 	r, err := http.Get(url)
@@ -42,14 +46,23 @@ func download(url, output string) error {
 	}
 	defer out.Close()
 
+	size, _ := strconv.Atoi(r.Header.Get("Content-Length"))
+
+	bar := pb.New(size).SetUnits(pb.U_BYTES).SetRefreshRate(time.Millisecond * 10)
+	bar.ShowSpeed = true
+	bar.Start()
+
+	writer := io.MultiWriter(out, bar)
+
 	// io.copyBuffer, the actual implementation of io.Copy, reads maximum 32 KB
 	// from input, writes to output and then repeats. No need to worry about
 	// the size of file to download.
-	_, err = io.Copy(out, r.Body)
+	_, err = io.Copy(writer, r.Body)
 	if err != nil {
 		return err
 	}
 
+	bar.Finish()
 	return nil
 }
 
