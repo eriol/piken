@@ -102,6 +102,11 @@ func main() {
 					Value: " -- ",
 					Usage: "separator for unicode fields",
 				},
+				cli.StringSliceFlag{
+					Name:  "fields",
+					Value: &cli.StringSlice{"CodePoint", "Name"},
+					Usage: "unicode fields",
+				},
 			},
 			Action: func(c *cli.Context) {
 				args := strings.Join(c.Args(), " ")
@@ -110,8 +115,16 @@ func main() {
 					logrus.Fatal(err)
 				}
 
+				fields := c.StringSlice("fields")
+				// StringSliceFlag default value can't be overridden for now:
+				// https://github.com/codegangsta/cli/issues/160
+				if c.IsSet("fields") {
+					fields = fields[2:]
+					// TODO: validate fields
+				}
+
 				formatter := format.NewTextFormatter(
-					[]string{"CodePoint", "Name"},
+					fields,
 					c.String("separator"),
 					c.Bool("show-glyph"))
 
