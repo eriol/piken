@@ -97,6 +97,11 @@ func main() {
 					Name:  "show-glyph",
 					Usage: "show glyph (defaults to true, use --show-glyph=false to disable)",
 				},
+				cli.StringFlag{
+					Name:  "separator",
+					Value: " -- ",
+					Usage: "separator for unicode fields",
+				},
 			},
 			Action: func(c *cli.Context) {
 				args := strings.Join(c.Args(), " ")
@@ -107,7 +112,7 @@ func main() {
 
 				formatter := format.NewTextFormatter(
 					[]string{"CodePoint", "Name"},
-					" -- ",
+					c.String("separator"),
 					c.Bool("show-glyph"))
 
 				if c.Bool("copy") && len(rows) > 1 {
