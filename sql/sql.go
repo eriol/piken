@@ -22,9 +22,9 @@ const (
 		canonical_class TEXT NOT NULL,
 		bidi_class TEXT NOT NULL,
 		decomposition_type TEXT,
-		numeric_value_1 TEXT,
-		numeric_value_2 TEXT,
-		numeric_value_3 TEXT,
+		numeric_type TEXT,
+		numeric_digit TEXT,
+		numeric_value TEXT,
 		bidi_mirrored TEXT,
 		unicode_1_name TEXT,
 		iso_comment TEXT,
@@ -39,9 +39,9 @@ const (
 		canonical_class, 
 		bidi_class,
 		decomposition_type,
-		numeric_value_1,
-		numeric_value_2,
-		numeric_value_3,
+		numeric_type,
+		numeric_digit,
+		numeric_value,
 		bidi_mirrored,
 		unicode_1_name,
 		iso_comment,
@@ -59,11 +59,21 @@ type Store struct {
 }
 
 type UnicodeData struct {
-	CodePoint, Name, Category                                              string
-	CanonicalClass, BidiClass, DecompositionType                           string
-	NumericValue1, NumericValue2, NumericValue3                            string
-	BidiMirrored, Unicode1Name, IsoComment                                 string
-	SimpleUppercaseMapping, SimpleLowercaseMapping, SimpleTitlecaseMapping string
+	CodePoint              string
+	Name                   string
+	Category               string
+	CanonicalClass         string
+	BidiClass              string
+	DecompositionType      string
+	NumericType            string
+	NumericDigit           string
+	NumericValue           string
+	BidiMirrored           string
+	Unicode1Name           string
+	ISOComment             string
+	SimpleUppercaseMapping string
+	SimpleLowercaseMapping string
+	SimpleTitlecaseMapping string
 }
 
 // Open SQLite 3 database used by piken or create it if it doesn't exist yet.
