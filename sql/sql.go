@@ -95,7 +95,6 @@ func (s *Store) Open(database string) error {
 	}
 
 	return nil
-
 }
 
 // Close SQLite3 database used by piken.
@@ -169,7 +168,6 @@ func (s *Store) GetLastUpdate(filename string) (time.Time, error) {
 	}
 
 	return tp, nil
-
 }
 
 // Search unicode data using name.
@@ -193,5 +191,4 @@ func (s *Store) SearchUnicode(name string) (records []UnicodeData, err error) {
 	}
 
 	return records, nil
-
 }
