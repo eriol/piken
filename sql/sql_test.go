@@ -1,7 +1,6 @@
 package sql
 
 import (
-	"database/sql"
 	"io/ioutil"
 	"os"
 	"path"
@@ -11,44 +10,52 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-// Insert some data for testing.
-func fixture(databaseName string) {
-	db, _ := sql.Open("sqlite3", databaseName)
-	defer db.Close()
+var store Store
 
-	db.Exec(`INSERT INTO unicode_data (codepoint, name, category)
-		VALUES ('1F60E', 'SMILING FACE WITH SUNGLASSES', 'So')`)
-	db.Exec(`INSERT INTO unicode_data (codepoint, name, category)
-		VALUES ('1F602', 'FACE WITH TEARS OF JOY', 'So')`)
-	db.Exec(`INSERT INTO unicode_data (codepoint, name, category)
-		VALUES ('1F4D7', 'GREEN BOOK', 'So')`)
-}
+func (s *Store) init() (dirName string, err error) {
 
-func TestSearch(t *testing.T) {
-	var s Store
-
-	dirName, err := ioutil.TempDir("", "piken")
+	dirName, err = ioutil.TempDir("", "piken")
 	if err != nil {
-		t.Fatal(err)
+		return "", err
 	}
-	defer os.RemoveAll(dirName)
 
 	databaseName := path.Join(dirName, "piken.sqlite3")
 
 	if err := s.Open(databaseName); err != nil {
+		return "", err
+	}
+
+	return dirName, nil
+}
+
+// Insert some data for testing.
+func (s *Store) fixture() {
+	s.db.Exec(`INSERT INTO unicode_data (codepoint, name, category)
+		VALUES ('1F60E', 'SMILING FACE WITH SUNGLASSES', 'So')`)
+	s.db.Exec(`INSERT INTO unicode_data (codepoint, name, category)
+		VALUES ('1F602', 'FACE WITH TEARS OF JOY', 'So')`)
+	s.db.Exec(`INSERT INTO unicode_data (codepoint, name, category)
+		VALUES ('1F4D7', 'GREEN BOOK', 'So')`)
+}
+
+func TestSearch(t *testing.T) {
+
+	dirName, err := store.init()
+	if err != nil {
 		assert.Error(t, err)
 	}
-	defer s.Close()
+	defer os.RemoveAll(dirName)
+	defer store.Close()
 
-	fixture(databaseName)
+	store.fixture()
 
-	data, err := s.SearchUnicode("cat")
+	data, err := store.SearchUnicode("cat")
 	if err != nil {
 		assert.Error(t, err)
 	}
 	assert.Equal(t, data, []UnicodeData(nil))
 
-	data, err = s.SearchUnicode("book")
+	data, err = store.SearchUnicode("book")
 	if err != nil {
 		assert.Error(t, err)
 	}
@@ -58,7 +65,7 @@ func TestSearch(t *testing.T) {
 	assert.Equal(t, data[0].Category, "So")
 
 	// Search is case insensitive
-	data, err = s.SearchUnicode("fAcE")
+	data, err = store.SearchUnicode("fAcE")
 	if err != nil {
 		assert.Error(t, err)
 	}
@@ -70,7 +77,7 @@ func TestSearch(t *testing.T) {
 	assert.Equal(t, data[1].Name, "FACE WITH TEARS OF JOY")
 	assert.Equal(t, data[1].Category, "So")
 
-	data, err = s.SearchUnicode("face NOT sunglasses")
+	data, err = store.SearchUnicode("face NOT sunglasses")
 	if err != nil {
 		assert.Error(t, err)
 	}
