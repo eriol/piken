@@ -5,6 +5,7 @@ import (
 	"os"
 	"path"
 	"testing"
+	"time"
 
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/stretchr/testify/assert"
@@ -85,4 +86,27 @@ func TestSearch(t *testing.T) {
 	assert.Equal(t, data[0].CodePoint, "1F602")
 	assert.Equal(t, data[0].Name, "FACE WITH TEARS OF JOY")
 	assert.Equal(t, data[0].Category, "So")
+}
+
+func TestLastUpdate(t *testing.T) {
+	dirName, err := store.init()
+	if err != nil {
+		assert.Error(t, err)
+	}
+	defer os.RemoveAll(dirName)
+	defer store.Close()
+
+	updateTime, err := store.GetLastUpdate("test.txt")
+	if err != nil {
+		assert.Error(t, err)
+	}
+	assert.Equal(t, updateTime, time.Unix(0, 0))
+
+	testTime, _ := time.Parse("2006-Jan-02", "1993-Jan-25")
+	if err := store.CreateLastUpdate("test.txt", testTime); err != nil {
+		assert.Error(t, err)
+	}
+	updateTime, err = store.GetLastUpdate("test.txt")
+	assert.Equal(t, updateTime, testTime)
+
 }
