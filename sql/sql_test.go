@@ -31,12 +31,9 @@ func (s *Store) init() (dirName string, err error) {
 
 // Insert some data for testing.
 func (s *Store) fixture() {
-	s.db.Exec(`INSERT INTO unicode_data (codepoint, name, category)
-		VALUES ('1F60E', 'SMILING FACE WITH SUNGLASSES', 'So')`)
-	s.db.Exec(`INSERT INTO unicode_data (codepoint, name, category)
-		VALUES ('1F602', 'FACE WITH TEARS OF JOY', 'So')`)
-	s.db.Exec(`INSERT INTO unicode_data (codepoint, name, category)
-		VALUES ('1F4D7', 'GREEN BOOK', 'So')`)
+	s.db.Exec(`INSERT INTO unicode_data VALUES ('1F60E', 'SMILING FACE WITH SUNGLASSES', 'So', '', '', '', '', '', '', '', '', '', '', '', '')`)
+	s.db.Exec(`INSERT INTO unicode_data VALUES ('1F602', 'FACE WITH TEARS OF JOY', 'So', '', '', '', '', '', '', '', '', '', '', '', '')`)
+	s.db.Exec(`INSERT INTO unicode_data VALUES ('1F4D7', 'GREEN BOOK', 'So', '', '', '', '', '', '', '', '', '', '', '', '')`)
 }
 
 func TestSearch(t *testing.T) {
