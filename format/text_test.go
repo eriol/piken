@@ -1,4 +1,5 @@
 package format // import "eriol.xyz/piken/format"
+
 import (
 	"strconv"
 	"testing"
@@ -44,5 +45,4 @@ func TestFormat(t *testing.T) {
 		[]string{"Name"}, " -- ", false)
 	b, _ = formatter.Format(&s)
 	assert.Equal(t, b, "FACE WITH TEARS OF JOY")
-
 }
