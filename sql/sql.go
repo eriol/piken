@@ -51,7 +51,7 @@ const (
 		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
 	createLastUpdateQuery = `INSERT INTO last_update (filename, date) VALUES (?, ?)`
 	getLastUpdateQuery    = `SELECT date FROM last_update WHERE filename = ?`
-	getUnicodeQuery       = `SELECT codepoint, name, category FROM unicode_data WHERE name MATCH ?`
+	getUnicodeQuery       = `SELECT * FROM unicode_data WHERE name MATCH ?`
 	countUnicodeQuery     = `SELECT count(*) FROM unicode_data`
 )
 
@@ -183,7 +183,22 @@ func (s *Store) SearchUnicode(name string) (records []UnicodeData, err error) {
 	for rows.Next() {
 		var row UnicodeData
 
-		if err := rows.Scan(&row.CodePoint, &row.Name, &row.Category); err != nil {
+		if err := rows.Scan(
+			&row.CodePoint,
+			&row.Name,
+			&row.Category,
+			&row.CanonicalClass,
+			&row.BidiClass,
+			&row.DecompositionType,
+			&row.NumericType,
+			&row.NumericDigit,
+			&row.NumericValue,
+			&row.BidiMirrored,
+			&row.Unicode1Name,
+			&row.ISOComment,
+			&row.SimpleUppercaseMapping,
+			&row.SimpleLowercaseMapping,
+			&row.SimpleTitlecaseMapping); err != nil {
 			return []UnicodeData{}, err
 		}
 
