@@ -52,6 +52,7 @@ const (
 	createLastUpdateQuery = `INSERT INTO last_update (filename, date) VALUES (?, ?)`
 	getLastUpdateQuery    = `SELECT date FROM last_update WHERE filename = ?`
 	getUnicodeQuery       = `SELECT codepoint, name, category FROM unicode_data WHERE name MATCH ?`
+	countUnicodeQuery     = `SELECT count(*) FROM unicode_data`
 )
 
 type Store struct {
@@ -191,4 +192,13 @@ func (s *Store) SearchUnicode(name string) (records []UnicodeData, err error) {
 	}
 
 	return records, nil
+}
+
+// Count total rows inside unicode data table.
+func (s *Store) CountUnicodeData() int {
+	var total int
+
+	s.db.QueryRow(countUnicodeQuery).Scan(&total)
+
+	return total
 }

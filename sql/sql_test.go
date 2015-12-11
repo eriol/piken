@@ -108,5 +108,23 @@ func TestLastUpdate(t *testing.T) {
 	}
 	updateTime, err = store.GetLastUpdate("test.txt")
 	assert.Equal(t, updateTime, testTime)
+}
 
+func TestLoadFromRecords(t *testing.T) {
+	dirName, err := store.init()
+	if err != nil {
+		assert.Error(t, err)
+	}
+	defer os.RemoveAll(dirName)
+	defer store.Close()
+
+	records := [][]string{
+		[]string{"1F60E", "SMILING FACE WITH SUNGLASSES", "So", "", "", "", "", "", "", "", "", "", "", "", ""},
+		[]string{"1F602", "FACE WITH TEARS OF JOY", "So", "", "", "", "", "", "", "", "", "", "", "", ""},
+		[]string{"1F4D7", "GREEN BOOK", "So", "", "", "", "", "", "", "", "", "", "", "", ""},
+	}
+
+	store.LoadFromRecords(records)
+
+	assert.Equal(t, store.CountUnicodeData(), 3)
 }
