@@ -139,3 +139,18 @@ A61B -- VAI SYMBOL DOONG -- ꘛ
 
 # Note: Capital C and Capital H are missing from UnicodeData.txt
 ```
+
+### Copy into clipboard ###
+
+Option `--copy` (compact form `-c`) can be used to copy the glyph directly into
+the clipboard when search return only one row:
+
+```console
+% piken search --copy door
+WARN[0000] Copy to clipboard not allowed for multiple rows.
+2F3E -- KANGXI RADICAL DOOR -- ⼾
+1F6AA -- DOOR -- 🚪
+
+% piken search --copy door NOT k*
+1F6AA -- DOOR -- 🚪
+```
