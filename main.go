@@ -24,7 +24,7 @@ const (
 	pikenHome           = ".piken"
 	defaultDatabaseFile = "piken.sqlite3"
 	defaultDataFile     = "UnicodeData.txt"
-	version             = "0.1a"
+	version             = "0.1"
 )
 
 var (
