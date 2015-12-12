@@ -13,8 +13,10 @@ Install
 
 	% go get eriol.xyz/piken
 
-After installation use `piken update` to get unicode data from
-http://www.unicode.org/Public/UNIDATA/UnicodeData.txt.
+After installation use "piken update" to get unicode data from
+http://www.unicode.org/Public/UNIDATA/UnicodeData.txt:
+
+	% piken update
 
 Usage
 
@@ -45,10 +47,10 @@ Search
 piken exposes SQLite3's full-text search (see https://www.sqlite.org/fts3.html)
 on command line.
 
-**NOTE:** if you are using *zsh*, it's useful to disable glob expressions with
-`noglob` (using an alias for example) instead of quote searches.
+NOTE:if you are using zsh, it's useful to disable glob expressions with
+noglob (using an alias for example) instead of quote searches.
 
-Default fields showed are *codepoint* and *name*, but it easy to override this:
+Default fields showed are codepoint and name, but it easy to override this:
 
 	% piken search red apple
 	1F34E -- RED APPLE -- 🍎
