@@ -18,7 +18,7 @@ http://www.unicode.org/Public/UNIDATA/UnicodeData.txt.
 ```console
 % piken -h
 NAME:
-   piken - unicode search tool
+   piken - unicode search tool backed by SQLite3
 
 USAGE:
    ./piken [global options] command [command options] [arguments...]

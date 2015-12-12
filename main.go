@@ -36,7 +36,7 @@ func main() {
 	app.Version = version
 	app.Author = "Daniele Tricoli"
 	app.Email = "eriol@mornie.org"
-	app.Usage = "unicode search tool"
+	app.Usage = "unicode search tool backed by SQLite3"
 
 	if _, err := os.Stat(baseDir); os.IsNotExist(err) {
 		os.Mkdir(baseDir, 0755)
@@ -157,5 +157,4 @@ func main() {
 	}
 
 	app.Run(os.Args)
-
 }
