@@ -137,5 +137,5 @@ A61B -- VAI SYMBOL DOONG -- ꘛ
 1D50E -- MATHEMATICAL FRAKTUR CAPITAL K -- 𝔎
 1D50F -- MATHEMATICAL FRAKTUR CAPITAL L -- 𝔏
 
-# Note: Capital C is missing from UnicodeData.txt
+# Note: Capital C and Capital H are missing from UnicodeData.txt
 ```
