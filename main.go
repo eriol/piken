@@ -10,6 +10,7 @@ import (
 	"os"
 	"path"
 	"strings"
+	"time"
 
 	"github.com/Sirupsen/logrus"
 	"github.com/atotto/clipboard"
@@ -75,14 +76,27 @@ func main() {
 						logrus.Fatal(err)
 					}
 
+					if err := store.DeleteUnicodeData(); err != nil {
+						logrus.Fatal(err)
+					}
+
 					if err := store.LoadFromRecords(records); err != nil {
 						logrus.Fatal(err)
 					}
 
-					if err := store.CreateLastUpdate(defaultDataFile,
-						modifiedTime); err != nil {
-						logrus.Fatal(err)
+					if lastUpdate == time.Unix(0, 0) {
+						if err := store.CreateLastUpdate(defaultDataFile,
+							modifiedTime); err != nil {
+							logrus.Fatal(err)
+						}
+					} else {
+						if err := store.UpdateLastUpdate(defaultDataFile,
+							modifiedTime); err != nil {
+							logrus.Fatal(err)
+						}
+
 					}
+
 				} else {
 					logrus.Info("Already up to date.")
 				}

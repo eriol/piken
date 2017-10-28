@@ -54,7 +54,9 @@ const (
 		simple_lowercase_mapping,
 		simple_titlecase_mapping)
 		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+	deleteUdicodeData     = `DELETE FROM unicode_data;`
 	createLastUpdateQuery = `INSERT INTO last_update (filename, date) VALUES (?, ?)`
+	updateLastUpdateQuery = `UPDATE last_update SET date = ? where filename = ?`
 	getLastUpdateQuery    = `SELECT date FROM last_update WHERE filename = ?`
 	getUnicodeQuery       = `SELECT * FROM unicode_data WHERE name MATCH ?`
 	countUnicodeQuery     = `SELECT count(*) FROM unicode_data`
@@ -147,12 +149,32 @@ func (s *Store) LoadFromRecords(records [][]string) error {
 	return nil
 }
 
+// DeleteUnicodeData removes all data from unicode_data table.
+func (s *Store) DeleteUnicodeData() error {
+
+	_, err := s.db.Exec(deleteUdicodeData)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 // Create latest update entry for given file.
 func (s *Store) CreateLastUpdate(filename string, t time.Time) error {
 
 	ts := t.Format(time.RFC3339)
 
 	_, err := s.db.Exec(createLastUpdateQuery, filename, ts)
+
+	return err
+}
+
+// UpdateLastUpdate updates date entry for given file.
+func (s *Store) UpdateLastUpdate(filename string, t time.Time) error {
+
+	ts := t.Format(time.RFC3339)
+
+	_, err := s.db.Exec(updateLastUpdateQuery, ts, filename)
 
 	return err
 }

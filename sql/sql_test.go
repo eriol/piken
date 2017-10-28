@@ -98,17 +98,26 @@ func TestLastUpdate(t *testing.T) {
 	defer os.RemoveAll(dirName)
 	defer store.Close()
 
+	const timeForm = "2006-Jan-02"
+
 	updateTime, err := store.GetLastUpdate("test.txt")
 	if err != nil {
 		assert.Error(t, err)
 	}
 	assert.Equal(t, updateTime, time.Unix(0, 0))
 
-	testTime, _ := time.Parse("2006-Jan-02", "1993-Jan-25")
+	testTime, _ := time.Parse(timeForm, "1993-Jan-25")
 	if err := store.CreateLastUpdate("test.txt", testTime); err != nil {
 		assert.Error(t, err)
 	}
-	updateTime, err = store.GetLastUpdate("test.txt")
+	updateTime, _ = store.GetLastUpdate("test.txt")
+	assert.Equal(t, updateTime, testTime)
+
+	testTime, _ = time.Parse(timeForm, "2001-Feb-08")
+	if err := store.UpdateLastUpdate("test.txt", testTime); err != nil {
+		assert.Error(t, err)
+	}
+	updateTime, _ = store.GetLastUpdate("test.txt")
 	assert.Equal(t, updateTime, testTime)
 }
 
@@ -129,4 +138,21 @@ func TestLoadFromRecords(t *testing.T) {
 	store.LoadFromRecords(records)
 
 	assert.Equal(t, store.CountUnicodeData(), 3)
+}
+
+func TestDeleteUnicodeData(t *testing.T) {
+	dirName, err := store.init()
+	if err != nil {
+		assert.Error(t, err)
+	}
+	defer os.RemoveAll(dirName)
+	defer store.Close()
+
+	store.fixture()
+
+	assert.Equal(t, store.CountUnicodeData(), 3)
+
+	store.DeleteUnicodeData()
+
+	assert.Equal(t, store.CountUnicodeData(), 0)
 }
